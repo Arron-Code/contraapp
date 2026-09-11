@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express, { type ErrorRequestHandler } from 'express';
-import helmet from 'helmet';
+import * as helmetModule from 'helmet';
 import morgan from 'morgan';
 import { ZodError } from 'zod';
 import { pool } from './db.js';
@@ -11,7 +11,7 @@ import resourceRoutes from './routes/resources.js';
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
 
-app.use(helmet());
+app.use(helmetModule.default());
 app.use(cors({ origin: process.env.CLIENT_URL ?? 'http://localhost:5173' }));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('dev'));
