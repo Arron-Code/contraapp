@@ -10,9 +10,21 @@ import resourceRoutes from './routes/resources.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
+const allowedOrigins = (process.env.CLIENT_URL ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(helmetModule.default());
-app.use(cors({ origin: process.env.CLIENT_URL ?? 'http://localhost:5173' }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('Origin ist für diese API nicht freigegeben.'));
+  },
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('dev'));
 
