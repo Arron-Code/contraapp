@@ -12,14 +12,22 @@ export async function api<T>(
 ): Promise<T> {
   const token = localStorage.getItem('ericargo_token');
   const isFormData = options.body instanceof FormData;
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+    });
+  } catch {
+    throw new ApiError(
+      'Die API ist nicht erreichbar. Bitte prüfen Sie, ob der Server läuft.',
+      0,
+    );
+  }
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({ message: 'Anfrage fehlgeschlagen.' }));
