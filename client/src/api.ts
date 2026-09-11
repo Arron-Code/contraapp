@@ -1,4 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api';
+const API_URL = import.meta.env.VITE_API_URL ?? (
+  import.meta.env.DEV
+    ? 'http://localhost:4000/api'
+    : 'https://api-production-c720.up.railway.app/api'
+);
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
